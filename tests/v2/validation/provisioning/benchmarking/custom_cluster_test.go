@@ -105,31 +105,20 @@ func (c *CustomClusterProvisioningTestSuite) SetupSuite() {
 }
 
 func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomCluster() {
-	nodeRolesAll := []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
+	c.clustersConfig.MachinePools = []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
 
 	tests := []struct {
-		name         string
-		client       *rancher.Client
-		machinePools []provisioninginput.MachinePools
-		isWindows    bool
+		name   string
+		client *rancher.Client
 	}{
-		{"1 Node all roles " + provisioninginput.AdminClientName.String(), c.client, nodeRolesAll, false},
-		{"1 Node all roles " + provisioninginput.AdminClientName.String(), c.client, nodeRolesAll, false},
-		{"1 Node all roles " + provisioninginput.AdminClientName.String(), c.client, nodeRolesAll, false},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
 	}
 	for _, tt := range tests {
-		testSession := session.NewSession()
-		//setup the kubeconfigs for k6
-		//setup the chart installations
-		//run k6 test?
-		defer testSession.Cleanup()
-		if (c.isWindows == tt.isWindows) || (c.isWindows && !tt.isWindows) {
-			c.provisioningConfig.MachinePools = tt.machinePools
-			permutations.RunTestPermutations(&c.Suite, tt.name, tt.client, c.provisioningConfig, permutations.RKE2CustomCluster, nil, nil)
-		} else {
-			c.T().Skip("Skipping Windows tests")
-		}
+		permutations.RunTestPermutations(&c.Suite, tt.name, tt.client, c.clustersConfig, permutations.RKE2AirgapCluster, nil, c.corralPackage)
 	}
+
 }
 
 func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomClusterDynamicInput() {

@@ -1,7 +1,7 @@
 package benchmarking
 
 const (
-	corralPackageAirgapCustomClusterName = "airgapCustomCluster"
+	corralPackageAirgapCustomClusterName = "benchmarkCustomCluster"
 	corralBastionIP                      = "bastion_ip"
 	corralRegistryIP                     = "registry_ip"
 	corralRegistryFQDN                   = "registry_fqdn"
