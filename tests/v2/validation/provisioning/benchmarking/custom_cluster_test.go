@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CustomClusterProvisioningTestSuite struct {
+type BenchmarkingTestSuite struct {
 	suite.Suite
 	client             *rancher.Client
 	session            *session.Session
@@ -31,11 +31,11 @@ type CustomClusterProvisioningTestSuite struct {
 	isWindows          bool
 }
 
-func (c *CustomClusterProvisioningTestSuite) TearDownSuite() {
+func (c *BenchmarkingTestSuite) TearDownSuite() {
 	c.session.Cleanup()
 }
 
-func (c *CustomClusterProvisioningTestSuite) SetupSuite() {
+func (c *BenchmarkingTestSuite) SetupSuite() {
 	testSession := session.NewSession()
 	c.session = testSession
 
@@ -104,7 +104,7 @@ func (c *CustomClusterProvisioningTestSuite) SetupSuite() {
 
 }
 
-func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomCluster() {
+func (c *BenchmarkingTestSuite) TestProvisioningRKE2CustomCluster() {
 	c.clustersConfig.MachinePools = []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
 
 	tests := []struct {
@@ -117,34 +117,33 @@ func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomCluster()
 	}
 	for _, tt := range tests {
 		permutations.RunTestPermutations(&c.Suite, tt.name, tt.client, c.clustersConfig, permutations.RKE2AirgapCluster, nil, c.corralPackage)
+		//store the kube configs from each to be used by k6 tes
+		//install monitoring charts
 	}
 
 }
 
-func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomClusterDynamicInput() {
-	if len(c.provisioningConfig.MachinePools) == 0 {
-		c.T().Skip()
-	}
+func (c *BenchmarkingTestSuite) TestRunK6Test() {
+	c.clustersConfig.MachinePools = []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
 
 	tests := []struct {
 		name   string
 		client *rancher.Client
 	}{
-		{provisioninginput.AdminClientName.String(), c.client},
-		{provisioninginput.StandardClientName.String(), c.standardUserClient},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
+		{provisioninginput.AdminClientName.String() + "-" + permutations.RKE2AirgapCluster + "-", c.client},
 	}
 	for _, tt := range tests {
-		testSession := session.NewSession()
-		defer testSession.Cleanup()
-		_, err := tt.client.WithSession(testSession)
-		require.NoError(c.T(), err)
-
-		permutations.RunTestPermutations(&c.Suite, tt.name, tt.client, c.provisioningConfig, permutations.RKE2CustomCluster, nil, nil)
+		permutations.RunTestPermutations(&c.Suite, tt.name, tt.client, c.clustersConfig, permutations.RKE2AirgapCluster, nil, c.corralPackage)
+		//store the kube configs from each to be used by k6 tes
+		//install monitoring charts
 	}
+
 }
 
 // In order for 'go test' to run this suite, we need to create
 // a normal test function and pass our suite to suite.Run
-func TestCustomClusterRKE2ProvisioningTestSuite(t *testing.T) {
-	suite.Run(t, new(CustomClusterProvisioningTestSuite))
+func TestBenchmarkingTestSuite(t *testing.T) {
+	suite.Run(t, new(BenchmarkingTestSuite))
 }
