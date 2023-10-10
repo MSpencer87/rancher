@@ -14,6 +14,7 @@ import (
 	"github.com/rancher/rancher/tests/framework/pkg/config"
 	namegen "github.com/rancher/rancher/tests/framework/pkg/namegenerator"
 	"github.com/rancher/rancher/tests/framework/pkg/session"
+	"github.com/rancher/rancher/tests/v2/validation/pipeline/rancherha/corralha"
 	"github.com/rancher/rancher/tests/v2/validation/provisioning/permutations"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -40,6 +41,12 @@ func (c *CustomClusterProvisioningTestSuite) SetupSuite() {
 
 	c.provisioningConfig = new(provisioninginput.Config)
 	config.LoadConfig(provisioninginput.ConfigurationFileKey, c.provisioningConfig)
+
+	c.clustersConfig = new(provisioninginput.Config)
+	config.LoadConfig(provisioninginput.ConfigurationFileKey, c.clustersConfig)
+
+	corralRancherHA := new(corralha.CorralRancherHA)
+	config.LoadConfig(corralha.CorralRancherHAConfigConfigurationFileKey, corralRancherHA)
 
 	c.isWindows = false
 	for _, pool := range c.provisioningConfig.MachinePools {
@@ -76,6 +83,25 @@ func (c *CustomClusterProvisioningTestSuite) SetupSuite() {
 	require.NoError(c.T(), err)
 
 	c.standardUserClient = standardUserClient
+
+	listOfCorrals, err := corral.ListCorral()
+	require.NoError(c.T(), err)
+
+	corralConfig := corral.Configurations()
+	err = corral.SetupCorralConfig(corralConfig.CorralConfigVars, corralConfig.CorralConfigUser, corralConfig.CorralSSHPath)
+	require.NoError(c.T(), err)
+
+	c.corralPackage = corral.PackagesConfig()
+
+	_, corralExist := listOfCorrals[corralRancherHA.Name]
+	if corralExist {
+		bastionIP, err := corral.GetCorralEnvVar(corralRancherHA.Name, corralRegistryIP)
+		require.NoError(c.T(), err)
+
+		err = corral.UpdateCorralConfig(corralBastionIP, bastionIP)
+		require.NoError(c.T(), err)
+	}
+
 }
 
 func (c *CustomClusterProvisioningTestSuite) TestProvisioningRKE2CustomCluster() {
