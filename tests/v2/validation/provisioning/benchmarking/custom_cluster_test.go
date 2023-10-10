@@ -3,6 +3,7 @@ package benchmarking
 import (
 	"testing"
 
+	"github.com/rancher/rancher/tests/framework/clients/corral"
 	"github.com/rancher/rancher/tests/framework/clients/rancher"
 	management "github.com/rancher/rancher/tests/framework/clients/rancher/generated/management/v3"
 	"github.com/rancher/rancher/tests/framework/extensions/clusters"
@@ -24,6 +25,8 @@ type CustomClusterProvisioningTestSuite struct {
 	session            *session.Session
 	standardUserClient *rancher.Client
 	provisioningConfig *provisioninginput.Config
+	corralPackage      *corral.Packages
+	clustersConfig     *provisioninginput.Config
 	isWindows          bool
 }
 
