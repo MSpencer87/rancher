@@ -9,6 +9,7 @@ corralPackages:
     <nameOfPackage1>: <public corral image to deploy "ghcr.io/rancherlabs/corral/$pkg:latest>
     ...
   hasDebug: <bool, default=false>
+  hasTrace: <bool, default=false>
   hasCleanup: <bool, default=true>
   hasCustomRepo: <string, suggeseted=https://github.com/rancherlabs/corral-packages.git>
 

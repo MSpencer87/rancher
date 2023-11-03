@@ -17,7 +17,7 @@ func main() {
 	configPackage := corral.PackagesConfig()
 
 	path := configPackage.CorralPackageImages["ranchertestcoverage"]
-	_, err = corral.CreateCorral(testSession, "ranchertestcoverage", path, true, configPackage.HasCleanup)
+	_, err = corral.CreateCorral(testSession, "ranchertestcoverage", path, true, true, configPackage.HasCleanup)
 	if err != nil {
 		logrus.Errorf("error creating corral: %v", err)
 	}

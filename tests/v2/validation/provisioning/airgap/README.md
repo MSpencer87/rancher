@@ -30,6 +30,7 @@ corralPackages:
     rancherHA: dist/aws-aws-registry-standalone-rke2-rancher-airgap-calico-true-2.15.1-1.8.0 # the name of the corral rancher is configurable with config entry above
     ...
   hasDebug: <bool, default=false>
+  hasTrace: <bool, default=false>
   hasCleanup: <bool, default=true>
   hasSetCorralSSHKeys: <bool, default=false> # If you are creating the airgap rancher instance in the same test run, please set this to true so then the air gap cluster can communicate with the rancher instance. If the rancher instance was created beforehand this boolean is ignored.
 corralConfigs:

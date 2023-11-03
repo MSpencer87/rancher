@@ -84,7 +84,7 @@ func (rt *RegistryTestSuite) SetupSuite() {
 			path := configPackage.CorralPackageImages[name]
 			logrus.Infof("PATH: %s", path)
 
-			_, err = corral.CreateCorral(testSession, name, path, true, configPackage.HasCleanup)
+			_, err = corral.CreateCorral(testSession, name, path, true, true, configPackage.HasCleanup)
 			if err != nil {
 				logrus.Errorf("error creating corral: %v", err)
 			}

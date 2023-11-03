@@ -45,7 +45,7 @@ func (r *CorralStandaloneTestSuite) TestGenericCorralPackage() {
 	for packageName, packageImage := range corralPackage.CorralPackageImages {
 		newPackageName := namegen.AppendRandomString(packageName)
 		newPackages = append(newPackages, newPackageName)
-		corralRun, err := corral.CreateCorral(r.session, newPackageName, packageImage, corralPackage.HasDebug, corralPackage.HasDebug)
+		corralRun, err := corral.CreateCorral(r.session, newPackageName, packageImage, corralPackage.HasDebug, corralPackage.HasTrace, corralPackage.HasCleanup)
 		require.NoError(r.T(), err, "error creating corral %v", packageName)
 		r.T().Logf("Corral %v created successfully", packageName)
 		require.NotNil(r.T(), corralRun, "corral run had no restConfig")

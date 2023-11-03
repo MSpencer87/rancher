@@ -22,6 +22,7 @@ type Packages struct {
 	CorralPackageImages map[string]string `json:"corralPackageImages" yaml:"corralPackageImages"`
 	HasCleanup          bool              `json:"hasCleanup" yaml:"hasCleanup" default:"true"`
 	HasDebug            bool              `json:"hasDebug" yaml:"hasDebug" default:"false"`
+	HasTrace            bool              `json:"hasTrace" yaml:"hasTrace" default:"false"`
 	HasCustomRepo       string            `json:"hasCustomRepo" yaml:"hasCustomRepo"`
 }
 
