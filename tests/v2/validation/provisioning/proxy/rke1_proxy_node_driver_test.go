@@ -83,7 +83,7 @@ func (r *RKE1ProxyProvisioningTestSuite) SetupSuite() {
 	require.NoError(r.T(), err)
 
 	corralPackage := corral.PackagesConfig()
-	r.corralImage = corralPackage.CorralPackageImages[corralPackageProxyCustomClusterName]
+	r.corralImage = corralPackage.CorralPackageImages[corralPackageAirgapCustomClusterName]
 	r.corralAutoCleanup = corralPackage.HasCleanup
 
 	_, corralExist := listOfCorrals[corralRancherHA.Name]

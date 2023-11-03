@@ -84,7 +84,7 @@ func (k *K3SProxyTestSuite) SetupSuite() {
 	require.NoError(k.T(), err)
 
 	corralPackage := corral.PackagesConfig()
-	k.corralImage = corralPackage.CorralPackageImages[corralPackageProxyCustomClusterName]
+	k.corralImage = corralPackage.CorralPackageImages[corralPackageAirgapCustomClusterName]
 	k.corralAutoCleanup = corralPackage.HasCleanup
 
 	_, corralExist := listOfCorrals[corralRancherHA.Name]
