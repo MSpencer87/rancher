@@ -94,6 +94,24 @@ func VerifyRKE1Cluster(t *testing.T, client *rancher.Client, clustersConfig *clu
 		}
 	}
 
+	if clustersConfig.AgentEnvVars != nil {
+		for i := range clustersConfig.AgentEnvVars {
+			require.NotEmpty(t, clustersConfig.AgentEnvVars[i])
+			logrus.Infof("%s: %s", clustersConfig.AgentEnvVars[i].Name, clustersConfig.AgentEnvVars[i].Value)
+			if clustersConfig.AgentEnvVars[i].Name == "HTTPS_PROXY" {
+				assert.Contains(t, clustersConfig.AgentEnvVars[i].Value, ":3219")
+			}
+
+			if clustersConfig.AgentEnvVars[i].Name == "HTTP_PROXY" {
+				assert.Contains(t, clustersConfig.AgentEnvVars[i].Value, ":3219")
+			}
+
+			if clustersConfig.AgentEnvVars[i].Name == "NO_PROXY" {
+				assert.Equal(t, clustersConfig.AgentEnvVars[i].Value, "localhost,127.0.0.1,0.0.0.0,10.0.0.0/8,172.16.0.0/12,cattle-system.svc")
+			}
+		}
+	}
+
 	podErrors := pods.StatusPods(client, cluster.ID)
 	assert.Empty(t, podErrors)
 }
@@ -159,6 +177,24 @@ func VerifyCluster(t *testing.T, client *rancher.Client, clustersConfig *cluster
 		mgmtClusterObject, err := adminClient.Management.Cluster.ByID(status.ClusterName)
 		require.NoError(t, err)
 		VerifyACE(t, adminClient, mgmtClusterObject)
+	}
+
+	if clusterSpec.AgentEnvVars != nil {
+		for i := range clusterSpec.AgentEnvVars {
+			require.NotEmpty(t, clusterSpec.AgentEnvVars[i])
+			logrus.Infof("%s: %s", clusterSpec.AgentEnvVars[i].Name, clusterSpec.AgentEnvVars[i].Value)
+			if clusterSpec.AgentEnvVars[i].Name == "HTTPS_PROXY" {
+				assert.Contains(t, clusterSpec.AgentEnvVars[i].Value, ":3219")
+			}
+
+			if clusterSpec.AgentEnvVars[i].Name == "HTTP_PROXY" {
+				assert.Contains(t, clusterSpec.AgentEnvVars[i].Value, ":3219")
+			}
+
+			if clusterSpec.AgentEnvVars[i].Name == "NO_PROXY" {
+				assert.Equal(t, clusterSpec.AgentEnvVars[i].Value, "localhost,127.0.0.1,0.0.0.0,10.0.0.0/8,172.16.0.0/12,cattle-system.svc")
+			}
+		}
 	}
 
 	podErrors := pods.StatusPods(client, status.ClusterName)

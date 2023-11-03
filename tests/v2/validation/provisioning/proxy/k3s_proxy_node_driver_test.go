@@ -9,11 +9,11 @@ import (
 	management "github.com/rancher/rancher/tests/framework/clients/rancher/generated/management/v3"
 	"github.com/rancher/rancher/tests/framework/extensions/clusters"
 	"github.com/rancher/rancher/tests/framework/extensions/clusters/kubernetesversions"
-	"github.com/rancher/rancher/tests/framework/extensions/machinepools"
 	"github.com/rancher/rancher/tests/framework/extensions/provisioninginput"
 	"github.com/rancher/rancher/tests/framework/extensions/users"
 	password "github.com/rancher/rancher/tests/framework/extensions/users/passwordgenerator"
 	"github.com/rancher/rancher/tests/framework/pkg/config"
+	"github.com/rancher/rancher/tests/framework/pkg/environmentflag"
 	namegen "github.com/rancher/rancher/tests/framework/pkg/namegenerator"
 	"github.com/rancher/rancher/tests/framework/pkg/session"
 	"github.com/rancher/rancher/tests/v2/validation/pipeline/rancherha/corralha"
@@ -110,24 +110,24 @@ func (k *K3SProxyTestSuite) SetupSuite() {
 }
 
 func (k *K3SProxyTestSuite) TestProvisioningK3SClusterProxy() {
-	nodeRoles0 := []machinepools.NodeRoles{
-		{
-			ControlPlane: true,
-			Etcd:         true,
-			Worker:       true,
-			Quantity:     5,
-		},
+	nodeRolesAll := []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
+	tests := []struct {
+		name         string
+		machinePools []provisioninginput.MachinePools
+		client       *rancher.Client
+		runFlag      bool
+	}{
+		{"1 Node all roles " + provisioninginput.AdminClientName.String(), nodeRolesAll, k.client, k.client.Flags.GetValue(environmentflag.Short)},
 	}
 
-	tests := []struct {
-		name      string
-		nodeRoles []machinepools.NodeRoles
-		client    *rancher.Client
-	}{
-		{"5 Node all roles " + provisioninginput.AdminClientName.String(), nodeRoles0, k.client},
-	}
 	for _, tt := range tests {
-		permutations.RunTestPermutations(&k.Suite, tt.name, tt.client, k.clustersConfig, permutations.K3SProvisionCluster, nil, nil)
+		if !tt.runFlag {
+			k.T().Logf("SKIPPED")
+			continue
+		}
+		provisioningConfig := *k.clustersConfig
+		provisioningConfig.MachinePools = tt.machinePools
+		permutations.RunTestPermutations(&k.Suite, tt.name, tt.client, &provisioningConfig, permutations.K3SProvisionCluster, nil, nil)
 	}
 }
 

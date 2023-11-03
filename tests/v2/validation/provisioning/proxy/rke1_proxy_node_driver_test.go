@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/rancher/rancher/tests/framework/clients/corral"
@@ -87,8 +86,6 @@ func (r *RKE1ProxyProvisioningTestSuite) SetupSuite() {
 	r.corralImage = corralPackage.CorralPackageImages[corralPackageProxyCustomClusterName]
 	r.corralAutoCleanup = corralPackage.HasCleanup
 
-	fmt.Printf("json data: %s\n", r.provisioningConfig.AgentEnvVarsRKE1[0].Value)
-
 	_, corralExist := listOfCorrals[corralRancherHA.Name]
 	if corralExist {
 		bastionIP, err := corral.GetCorralEnvVar(corralRancherHA.Name, corralRegistryIP)
@@ -108,8 +105,6 @@ func (r *RKE1ProxyProvisioningTestSuite) SetupSuite() {
 		r.EnvVar.Name = "NO_PROXY"
 		r.EnvVar.Value = "localhost,127.0.0.1,0.0.0.0,10.0.0.0/8,cattle-system.svc"
 		r.provisioningConfig.AgentEnvVarsRKE1 = append(r.provisioningConfig.AgentEnvVarsRKE1, r.EnvVar)
-	} else {
-		fmt.Printf("json data: %s\n", r.provisioningConfig.AgentEnvVarsRKE1[0].Value)
 	}
 }
 

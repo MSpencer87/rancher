@@ -9,11 +9,11 @@ import (
 	management "github.com/rancher/rancher/tests/framework/clients/rancher/generated/management/v3"
 	"github.com/rancher/rancher/tests/framework/extensions/clusters"
 	"github.com/rancher/rancher/tests/framework/extensions/clusters/kubernetesversions"
-	"github.com/rancher/rancher/tests/framework/extensions/machinepools"
 	"github.com/rancher/rancher/tests/framework/extensions/provisioninginput"
 	"github.com/rancher/rancher/tests/framework/extensions/users"
 	password "github.com/rancher/rancher/tests/framework/extensions/users/passwordgenerator"
 	"github.com/rancher/rancher/tests/framework/pkg/config"
+	"github.com/rancher/rancher/tests/framework/pkg/environmentflag"
 	namegen "github.com/rancher/rancher/tests/framework/pkg/namegenerator"
 	"github.com/rancher/rancher/tests/framework/pkg/session"
 	"github.com/rancher/rancher/tests/v2/validation/pipeline/rancherha/corralha"
@@ -30,8 +30,6 @@ type RKE2ProxyTestSuite struct {
 	corralPackage      *corral.Packages
 	clustersConfig     *provisioninginput.Config
 	EnvVar             rkev1.EnvVar
-	corralImage        string
-	corralAutoCleanup  bool
 }
 
 func (r *RKE2ProxyTestSuite) TearDownSuite() {
@@ -84,9 +82,7 @@ func (r *RKE2ProxyTestSuite) SetupSuite() {
 	err = corral.SetupCorralConfig(corralConfig.CorralConfigVars, corralConfig.CorralConfigUser, corralConfig.CorralSSHPath)
 	require.NoError(r.T(), err)
 
-	corralPackage := corral.PackagesConfig()
-	r.corralImage = corralPackage.CorralPackageImages[corralPackageProxyCustomClusterName]
-	r.corralAutoCleanup = corralPackage.HasCleanup
+	r.corralPackage = corral.PackagesConfig()
 
 	_, corralExist := listOfCorrals[corralRancherHA.Name]
 	if corralExist {
@@ -107,28 +103,30 @@ func (r *RKE2ProxyTestSuite) SetupSuite() {
 		r.EnvVar.Name = "NO_PROXY"
 		r.EnvVar.Value = "localhost,127.0.0.1,0.0.0.0,10.0.0.0/8,cattle-system.svc"
 		r.clustersConfig.AgentEnvVars = append(r.clustersConfig.AgentEnvVars, r.EnvVar)
+
+		err = corral.SetCorralSSHKeys(corralRancherHA.Name)
+		require.NoError(r.T(), err)
 	}
 }
 
 func (r *RKE2ProxyTestSuite) TestProvisioningRKE2ClusterProxy() {
-	nodeRoles0 := []machinepools.NodeRoles{
-		{
-			ControlPlane: true,
-			Etcd:         true,
-			Worker:       true,
-			Quantity:     5,
-		},
-	}
-
+	nodeRolesAll := []provisioninginput.MachinePools{provisioninginput.AllRolesMachinePool}
 	tests := []struct {
-		name      string
-		nodeRoles []machinepools.NodeRoles
-		client    *rancher.Client
+		name         string
+		machinePools []provisioninginput.MachinePools
+		client       *rancher.Client
+		runFlag      bool
 	}{
-		{"5 Node all roles " + provisioninginput.AdminClientName.String(), nodeRoles0, r.client},
+		{"1 Node all roles " + provisioninginput.AdminClientName.String(), nodeRolesAll, r.client, r.client.Flags.GetValue(environmentflag.Short)},
 	}
 	for _, tt := range tests {
-		permutations.RunTestPermutations(&r.Suite, tt.name, tt.client, r.clustersConfig, permutations.RKE2ProvisionCluster, nil, nil)
+		if !tt.runFlag {
+			r.T().Logf("SKIPPED")
+			continue
+		}
+		provisioningConfig := *r.clustersConfig
+		provisioningConfig.MachinePools = tt.machinePools
+		permutations.RunTestPermutations(&r.Suite, tt.name, tt.client, &provisioningConfig, permutations.RKE2ProvisionCluster, nil, nil)
 	}
 }
 
