@@ -78,6 +78,11 @@ node {
           stage('Checkout') {
             deleteDir()
             dir("./rancher") {
+
+
+              sh "echo ${RANCHER_REGISTRY_USER_NAME}"
+              sh "echo ${RANCHER_REGISTRY_PASSWORD}"
+
               checkout([
                       $class: 'GitSCM',
                       branches: [[name: "*/${branch}"]],
@@ -87,10 +92,6 @@ node {
             }
             dir('./') {
               echo "cloning corral-packages repo"
-
-              sh "cat ${RANCHER_REGISTRY_USER_NAME}"
-              sh "cat ${RANCHER_REGISTRY_PASSWORD}"
-
               dir('./corral-packages') {
                 checkout([
                       $class: 'GitSCM',
@@ -110,9 +111,6 @@ node {
               config = config.replace('${AWS_VPC}', env.AWS_VPC)
               config = config.replace('${AWS_SECURITY_GROUPS}', env.AWS_SECURITY_GROUPS)
               config = config.replace('${ADMIN_PASSWORD}', env.ADMIN_PASSWORD)
-
-              sh "cat ${RANCHER_REGISTRY_USER_NAME}"
-              sh "cat ${RANCHER_REGISTRY_PASSWORD}"
 
               if (env.AWS_SSH_PEM_KEY && env.AWS_SSH_KEY_NAME) {
                 dir("./rancher/tests/v2/validation/.ssh") {
