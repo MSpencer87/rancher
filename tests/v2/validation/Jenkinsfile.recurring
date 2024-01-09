@@ -88,6 +88,9 @@ node {
             dir('./') {
               echo "cloning corral-packages repo"
 
+              sh "cat ${RANCHER_REGISTRY_USER_NAME}"
+              sh "cat ${RANCHER_REGISTRY_PASSWORD}"
+
               dir('./corral-packages') {
                 checkout([
                       $class: 'GitSCM',
