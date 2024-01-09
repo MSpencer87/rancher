@@ -111,8 +111,6 @@ node {
               sh "cat $RANCHER_REGISTRY_USER_NAME"
               sh "cat $RANCHER_REGISTRY_PASSWORD"
 
-              cat
-
               if (env.AWS_SSH_PEM_KEY && env.AWS_SSH_KEY_NAME) {
                 dir("./rancher/tests/v2/validation/.ssh") {
                   def decoded = new String(AWS_SSH_PEM_KEY.decodeBase64())
