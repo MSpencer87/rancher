@@ -104,6 +104,8 @@ node {
 
               sh "echo $RANCHER_REGISTRY_USER_NAME"
               sh "echo $RANCHER_REGISTRY_PASSWORD"
+              sh "echo $RANCHER_TEST_CLIENT_IMAGE"
+              sh "echo $RANCHER_REGISTRY"
 
               if (env.AWS_SSH_PEM_KEY && env.AWS_SSH_KEY_NAME) {
                 dir("./rancher/tests/v2/validation/.ssh") {
