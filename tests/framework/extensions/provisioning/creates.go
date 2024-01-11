@@ -512,7 +512,6 @@ func CreateProvisioningAirgapCustomCluster(client *rancher.Client, clustersConfi
 			corralName,
 			corralPackages.CorralPackageImages[corralPackageAirgapCustomClusterName],
 			corralPackages.HasDebug,
-			corralPackages.HasTrace,
 			corralPackages.HasCleanup,
 		)
 		if err != nil {
