@@ -15,7 +15,7 @@ replace (
 	github.com/rancher/rancher/pkg/apis => ./pkg/apis
 	github.com/rancher/rancher/pkg/client => ./pkg/client
 
-	github.com/rancher/shepherd => github.com/mspencer87/shepherd v0.0.0-20241029165000-cb2599aa91ce
+	github.com/rancher/shepherd => github.com/mspencer87/shepherd v0.0.0-20241101192732-f4ac656e0d45
 
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc => go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.53.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.53.0
@@ -64,7 +64,7 @@ replace (
 
 require (
 	github.com/antihax/optional v1.0.0
-	github.com/rancher/rancher/pkg/apis v0.0.0-20241023011518-955534c18d04
+	github.com/rancher/rancher/pkg/apis v0.0.0-20241030141955-e2d0b42c9125
 	go.qase.io/client v0.0.0-20231114201952-65195ec001fa
 )
 
@@ -139,7 +139,7 @@ require (
 	github.com/rancher/norman v0.0.0-20241001183610-78a520c160ab
 	github.com/rancher/rancher/pkg/client v0.0.0
 	github.com/rancher/remotedialer v0.4.0
-	github.com/rancher/rke v1.7.0-rc.1
+	github.com/rancher/rke v1.7.0-rc.5
 	github.com/rancher/shepherd v0.0.0-20241023152838-da6b36b3b5b4
 	github.com/rancher/steve v0.0.0-20241028205536-b2f2bab3c4b3
 	github.com/rancher/system-upgrade-controller/pkg/apis v0.0.0-20240301001845-4eacc2dabbde
